@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # 1. Cấu hình dịch vụ cơ sở dữ liệu PostgreSQL
+  postgres:
+    image: postgres:15
+    container_name: chinese-center-postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - chinese-center-network
+
+  # 2. Cấu hình dịch vụ lưu trữ bộ nhớ đệm Redis
+  redis:
+    image: redis:7.0-alpine
+    container_name: chinese-center-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - chinese-center-network
+
+  # 3. Cấu hình dịch vụ hàng đợi tin nhắn RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3.11-management-alpine
+    container_name: chinese-center-rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"     # Cổng kết nối dữ liệu ứng dụng (AMQP)
+      - "15672:15672"   # Cổng truy cập giao diện quản lý trên trình duyệt (Web UI)
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - chinese-center-network
+
+# Định nghĩa các volume để lưu trữ dữ liệu bền vững (không mất dữ liệu khi tắt container)
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+
+# Định nghĩa mạng nội bộ dùng chung cho các dịch vụ
+networks:
+  chinese-center-network:
+    driver: bridge

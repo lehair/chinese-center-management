@@ -1,0 +1,4 @@
+CREATE DATABASE user_db;
+CREATE DATABASE course_db;
+CREATE DATABASE enrollment_db;
+CREATE DATABASE order_db;

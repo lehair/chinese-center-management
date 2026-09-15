@@ -1,0 +1,3 @@
+/* We can reuse the styling from AdminCoursesPage by importing the same structure, 
+but if we need specifics we put them here. Since AdminCoursesPage.css applies to .admin-page, 
+this file can be empty or just contain category-specific overrides. */
